@@ -67,19 +67,19 @@ class MainWindow(QMainWindow):
         layout.setSpacing(0)
 
         self._location_panel = LocationPanel()
-        layout.addWidget(self._location_panel)
+        layout.addWidget(self._location_panel, 2)
 
         line1 = self._make_separator()
         layout.addWidget(line1)
 
         self._weather_panel = WeatherPanel()
-        layout.addWidget(self._weather_panel)
+        layout.addWidget(self._weather_panel, 5)
 
         line2 = self._make_separator()
         layout.addWidget(line2)
 
         self._moon_panel = MoonPanel()
-        layout.addWidget(self._moon_panel)
+        layout.addWidget(self._moon_panel, 1)
 
         return layout
 

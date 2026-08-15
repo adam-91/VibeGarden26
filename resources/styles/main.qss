@@ -123,8 +123,8 @@ QWidget {
 }
 
 #weatherPanel #weatherDetail {
-    font-size: 11px;
-    color: #999;
+    font-size: 12px;
+    color: #bbbbbb;
 }
 
 #weatherPanel #weatherLocation {
@@ -140,6 +140,44 @@ QWidget {
 }
 
 #pageIndicator {
+    font-size: 11px;
+    color: #888;
+}
+
+#weatherIconBig {
+    font-size: 40px;
+}
+
+#weatherBadge {
+    font-size: 16px;
+}
+
+#weatherMinMax {
+    font-size: 12px;
+    color: #cccccc;
+}
+
+#weatherWindNow {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#weatherSectionTitle {
+    font-size: 12px;
+    font-weight: bold;
+    color: #4CAF50;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+#noPrecipLabel {
+    font-size: 12px;
+    color: #999999;
+    padding: 8px 0;
+}
+
+#weatherDetailName {
     font-size: 11px;
     color: #888;
 }

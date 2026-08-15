@@ -144,6 +144,7 @@ class LocationPanel(QWidget):
         )
         loc_id = self._location_repo.upsert(location)
         location.id = loc_id
+        self._location_repo.set_default(loc_id)
         self._current_location = location
         self._saved_combo.blockSignals(True)
         idx = self._saved_combo.findData(location)
@@ -163,6 +164,8 @@ class LocationPanel(QWidget):
             return
         self._current_location = loc
         self._location_repo.upsert(loc)
+        if loc.id is not None:
+            self._location_repo.set_default(loc.id)
         self._update_date_time()
         self._emit_location_changed()
 

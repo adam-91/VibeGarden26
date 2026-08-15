@@ -58,6 +58,17 @@ class WeatherData:
     hourly_wind_directions: list[float] = field(default_factory=list)
     hourly_wind_gusts: list[float] = field(default_factory=list)
     hourly_precipitation: list[float] = field(default_factory=list)
+    hourly_temperatures: list[float] = field(default_factory=list)
+    hourly_rain: list[float] = field(default_factory=list)
+    hourly_snowfall: list[float] = field(default_factory=list)
+    hourly_hail: list[float] = field(default_factory=list)
+    hourly_weather_codes: list[int] = field(default_factory=list)
+    daily_max_temp: float = 0.0
+    daily_min_temp: float = 0.0
+    daily_precip_sum: float = 0.0
+    daily_max_wind_speed: float = 0.0
+    daily_max_wind_gusts: float = 0.0
+    timezone: str = ""
 
 
 @dataclass
