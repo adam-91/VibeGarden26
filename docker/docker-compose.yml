@@ -1,0 +1,29 @@
+services:
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ..:/app
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:ro
+      - ~/.vibegarden26:/root/.vibegarden26
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=/tmp/.docker.xauth
+      - QT_X11_NO_MITSHM=1
+    network_mode: host
+    command: python src/main.py
+
+  test:
+    profiles: ["test"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ..:/app
+    environment:
+      - QT_QPA_PLATFORM=offscreen
+    command: >
+      sh -c "pip install pytest pytest-asyncio pytest-httpx &&
+             pytest tests/ -v --tb=short"
