@@ -1,0 +1,404 @@
+/* VibeGarden26 - Dark Anthracite Theme with Green Accents */
+
+QMainWindow {
+    background-color: #1e1e1e;
+}
+
+QWidget {
+    color: #e0e0e0;
+    font-family: "Segoe UI", "Ubuntu", sans-serif;
+    font-size: 13px;
+}
+
+/* Sidebar */
+#sidebar {
+    background-color: #252525;
+    border-right: 1px solid #3a3a3a;
+}
+
+#sidebarSeparator {
+    background-color: #3a3a3a;
+    margin: 4px 12px;
+}
+
+#panelTitle {
+    font-size: 11px;
+    font-weight: bold;
+    color: #4CAF50;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+/* Location Panel */
+#searchInput {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #e0e0e0;
+}
+
+#searchInput:focus {
+    border-color: #4CAF50;
+}
+
+#searchBtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: bold;
+}
+
+#searchBtn:hover {
+    background-color: #45a049;
+}
+
+#searchResults {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    color: #e0e0e0;
+}
+
+#searchResults::item:hover {
+    background-color: #404040;
+}
+
+#searchResults::item:selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#savedLocations {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #e0e0e0;
+}
+
+#savedLocations::drop-down {
+    border: none;
+}
+
+#savedLocations QAbstractItemView {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    selection-background-color: #4CAF50;
+    color: #e0e0e0;
+}
+
+#tzLabel {
+    font-size: 11px;
+    color: #888;
+}
+
+#dateLabel {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#timeLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+/* Weather Panel */
+#weatherPanel #weatherTemp {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#weatherPanel #weatherDesc {
+    font-size: 13px;
+    color: #cccccc;
+}
+
+#weatherPanel #weatherDetail {
+    font-size: 11px;
+    color: #999;
+}
+
+#weatherPanel #weatherLocation {
+    font-size: 12px;
+    color: #4CAF50;
+}
+
+#weatherPanel #weatherWindBig {
+    font-size: 13px;
+    font-weight: bold;
+    color: #cccccc;
+    padding: 2px 0;
+}
+
+#pageIndicator {
+    font-size: 11px;
+    color: #888;
+}
+
+#weatherNavBtn {
+    background-color: transparent;
+    color: #4CAF50;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px;
+}
+
+#weatherNavBtn:hover {
+    background-color: #404040;
+}
+
+/* Moon Panel */
+#moonPanel #moonIcon {
+    font-size: 36px;
+}
+
+#moonPanel #moonPhaseName {
+    font-size: 12px;
+    color: #cccccc;
+}
+
+#moonPanel #moonDetail {
+    font-size: 11px;
+    color: #999;
+}
+
+/* Calendar Header */
+#calNavBtn {
+    background-color: transparent;
+    color: #4CAF50;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+#calNavBtn:hover {
+    background-color: #404040;
+}
+
+#calMonthLabel {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#calTodayBtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-weight: bold;
+}
+
+#calTodayBtn:hover {
+    background-color: #45a049;
+}
+
+/* Calendar Grid - header row */
+#calDayHeader {
+    font-size: 11px;
+    color: #888;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Daily Event List */
+#dailyHeader {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#addEventBtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-weight: bold;
+}
+
+#addEventBtn:hover {
+    background-color: #45a049;
+}
+
+#dailyEventList {
+    background-color: #252525;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    padding: 4px;
+    color: #e0e0e0;
+}
+
+#dailyEventList::item {
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+#dailyEventList::item:hover {
+    background-color: #404040;
+}
+
+#dailyEventList::item:selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Event Editor Dialog */
+#eventEditor {
+    background-color: #252525;
+}
+
+#eventEditor QLabel {
+    color: #cccccc;
+}
+
+#sectionLabel {
+    font-size: 12px;
+    font-weight: bold;
+    color: #4CAF50;
+    padding: 8px 0 2px 0;
+    border-bottom: 1px solid #3a3a3a;
+    margin-top: 6px;
+}
+
+#eventEditor QLineEdit,
+#eventEditor QTextEdit,
+#eventEditor QDateEdit,
+#eventEditor QTimeEdit {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #e0e0e0;
+}
+
+#eventEditor QLineEdit:focus,
+#eventEditor QTextEdit:focus {
+    border-color: #4CAF50;
+}
+
+#eventEditor QComboBox {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #e0e0e0;
+}
+
+#eventEditor QComboBox::drop-down {
+    border: none;
+}
+
+#eventEditor QComboBox QAbstractItemView {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    selection-background-color: #4CAF50;
+    color: #e0e0e0;
+}
+
+#eventEditor QSpinBox {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #e0e0e0;
+}
+
+#eventEditor QCheckBox {
+    color: #cccccc;
+}
+
+#eventEditor QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #3a3a3a;
+    border-radius: 3px;
+    background-color: #2a2a2a;
+}
+
+#eventEditor QCheckBox::indicator:checked {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+#eventEditor QPushButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: bold;
+}
+
+#eventEditor QPushButton:hover {
+    background-color: #45a049;
+}
+
+/* Status Bar */
+QStatusBar {
+    background-color: #252525;
+    border-top: 1px solid #3a3a3a;
+    color: #888;
+}
+
+/* Splitter */
+QSplitter::handle {
+    background-color: #3a3a3a;
+    width: 1px;
+}
+
+/* Scrollbar */
+QScrollBar:vertical {
+    background-color: #2a2a2a;
+    width: 8px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #555;
+    border-radius: 4px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #4CAF50;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QScrollBar:horizontal {
+    background-color: #2a2a2a;
+    height: 8px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #555;
+    border-radius: 4px;
+    min-width: 30px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #4CAF50;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+}
