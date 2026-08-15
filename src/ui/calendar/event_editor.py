@@ -18,13 +18,13 @@ from PySide6.QtWidgets import (
     QPushButton,
     QSpinBox,
     QTextEdit,
-    QTimeEdit,
     QVBoxLayout,
     QWidget,
 )
 
 from src.config.settings import CATEGORY_COLORS
 from src.models import CalendarEvent
+from src.ui.calendar.clock_picker import ClockTimeField
 
 
 class EventEditorDialog(QDialog):
@@ -82,14 +82,10 @@ class EventEditorDialog(QDialog):
         self._all_day_check.setChecked(True)
         form.addRow("", self._all_day_check)
 
-        self._start_time = QTimeEdit()
-        self._start_time.setDisplayFormat("HH:mm")
-        self._start_time.setEnabled(False)
+        self._start_time = ClockTimeField()
         form.addRow("Godz. startu:", self._start_time)
 
-        self._end_time = QTimeEdit()
-        self._end_time.setDisplayFormat("HH:mm")
-        self._end_time.setEnabled(False)
+        self._end_time = ClockTimeField()
         form.addRow("Godz. końca:", self._end_time)
 
         self._color_btn = QPushButton()
@@ -165,13 +161,30 @@ class EventEditorDialog(QDialog):
 
         self._all_day_check.toggled.connect(self._on_all_day_toggled)
         self._color_btn.clicked.connect(self._on_color_pick)
+        self._category_combo.currentIndexChanged.connect(self._on_category_changed)
         self._reminder_combo.currentIndexChanged.connect(self._on_reminder_type_changed)
         self._reminder_check.toggled.connect(lambda c: self._reminder_combo.setEnabled(c))
         self._reminder_combo.setEnabled(False)
+        self._title_edit.textChanged.connect(lambda _: self._set_field_error(self._title_edit, False))
+
+    def _set_field_error(self, widget, error: bool) -> None:
+        widget.setProperty("error", error)
+        widget.style().unpolish(widget)
+        widget.style().polish(widget)
+        widget.update()
 
     def _on_all_day_toggled(self, checked: bool) -> None:
-        self._start_time.setEnabled(not checked)
-        self._end_time.setEnabled(not checked)
+        self._start_time.setEnabled(True)
+        self._end_time.setEnabled(True)
+
+    def _on_category_changed(self, idx: int) -> None:
+        category = self._category_combo.itemData(idx)
+        if category in CATEGORY_COLORS:
+            self._current_color = CATEGORY_COLORS[category]
+            self._color_btn.setStyleSheet(
+                f"background-color: {self._current_color};"
+                " border: 2px solid #555; border-radius: 16px;"
+            )
 
     def _on_reminder_type_changed(self, idx: int) -> None:
         self._reminder_custom.setEnabled(
@@ -198,12 +211,11 @@ class EventEditorDialog(QDialog):
             if self._event.end_date:
                 self._end_date.setDate(date.fromisoformat(self._event.end_date))
             if self._event.start_time:
-                from datetime import time as dt_time
                 h, m = map(int, self._event.start_time.split(":"))
-                self._start_time.setTime(dt_time(h, m))
+                self._start_time.set_time(h, m)
             if self._event.end_time:
                 h, m = map(int, self._event.end_time.split(":"))
-                self._end_time.setTime(dt_time(h, m))
+                self._end_time.set_time(h, m)
             self._all_day_check.setChecked(self._event.is_all_day)
             self._current_color = self._event.color
             ridx = self._recurrence_combo.findData(self._event.recurrence_type)
@@ -230,6 +242,8 @@ class EventEditorDialog(QDialog):
     def _on_accept(self) -> None:
         title = self._title_edit.text().strip()
         if not title:
+            self._set_field_error(self._title_edit, True)
+            self._title_edit.setFocus()
             return
         reminder_unit = self._reminder_combo.currentData()
         reminder_value = (
@@ -237,6 +251,8 @@ class EventEditorDialog(QDialog):
             if reminder_unit == "custom"
             else 1
         )
+        start_h, start_m = self._start_time.time_parts()
+        end_h, end_m = self._end_time.time_parts()
         self._result_event = CalendarEvent(
             id=self._event.id if self._event else None,
             title=title,
@@ -245,12 +261,12 @@ class EventEditorDialog(QDialog):
             start_date=self._start_date.date().toString("yyyy-MM-dd"),
             end_date=self._end_date.date().toString("yyyy-MM-dd"),
             start_time=(
-                self._start_time.time().toString("HH:mm")
+                f"{start_h:02d}:{start_m:02d}"
                 if not self._all_day_check.isChecked()
                 else None
             ),
             end_time=(
-                self._end_time.time().toString("HH:mm")
+                f"{end_h:02d}:{end_m:02d}"
                 if not self._all_day_check.isChecked()
                 else None
             ),

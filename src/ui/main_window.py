@@ -95,6 +95,8 @@ class MainWindow(QMainWindow):
     def _connect_signals(self) -> None:
         self._location_panel.location_changed.connect(self._on_location_changed)
         self._calendar._daily_list.add_event.connect(self._on_add_event)
+        self._calendar._daily_list.edit_event.connect(self._on_edit_event)
+        self._calendar._daily_list.delete_event.connect(self._on_delete_event)
 
         QTimer.singleShot(100, self._initial_location_refresh)
 
@@ -128,3 +130,19 @@ class MainWindow(QMainWindow):
                 self._status_bar.showMessage(
                     f"Dodano wydarzenie: {event.title}", 3000
                 )
+
+    def _on_edit_event(self, event) -> None:
+        dialog = EventEditorDialog(self, event=event)
+        if dialog.exec() == EventEditorDialog.DialogCode.Accepted:
+            updated = dialog.result_event
+            if updated:
+                self._calendar.model.update_event(updated)
+                self._calendar.refresh()
+                self._status_bar.showMessage(
+                    f"Zaktualizowano wydarzenie: {updated.title}", 3000
+                )
+
+    def _on_delete_event(self, event_id: int) -> None:
+        self._calendar.model.delete_event(event_id)
+        self._calendar.refresh()
+        self._status_bar.showMessage("Usunięto wydarzenie", 3000)

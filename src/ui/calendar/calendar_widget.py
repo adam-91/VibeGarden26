@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Optional
 
-from PySide6.QtCore import Qt, Signal, QRectF, QRect
+from PySide6.QtCore import Qt, Signal, QRectF, QRect, QTimer
 from PySide6.QtGui import (
     QColor,
     QFont,
@@ -17,9 +17,8 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
-    QListWidget,
-    QListWidgetItem,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
@@ -27,6 +26,7 @@ from PySide6.QtWidgets import (
 
 from src.config.settings import CATEGORY_COLORS
 from src.ui.calendar.calendar_model import CalendarModel
+from src.ui.calendar.timeline import TimelineWidget
 
 
 class CalendarDayCell(QWidget):
@@ -43,16 +43,13 @@ class CalendarDayCell(QWidget):
     COL_FUTURE_TEXT = QColor("#cccccc")
     COL_TODAY_TEXT = QColor("#ffffff")
     COL_MOON = QColor("#FFD700")
-    COL_ALLDAY_DOT = QColor("#4CAF50")
-    COL_TIMED_DOT = QColor("#FF9800")
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._date: Optional[date] = None
         self._today: Optional[date] = None
         self._selected: Optional[date] = None
-        self._all_day_count: int = 0
-        self._timed_count: int = 0
+        self._dot_colors: list[str] = []
         self._is_full_moon: bool = False
         self.setMinimumSize(38, 38)
 
@@ -61,15 +58,13 @@ class CalendarDayCell(QWidget):
         dt: Optional[date],
         today: date,
         selected: date,
-        all_day_count: int = 0,
-        timed_count: int = 0,
+        dot_colors: Optional[list[str]] = None,
         is_full_moon: bool = False,
     ) -> None:
         self._date = dt
         self._today = today
         self._selected = selected
-        self._all_day_count = all_day_count
-        self._timed_count = timed_count
+        self._dot_colors = dot_colors or []
         self._is_full_moon = is_full_moon
         self.setToolTip(dt.isoformat() if dt else "")
         self.update()
@@ -153,28 +148,17 @@ class CalendarDayCell(QWidget):
             )
             indicator_y += indicator_area_h * 0.50
 
-        if self._all_day_count > 0:
+        if self._dot_colors:
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(self.COL_ALLDAY_DOT)
             dot_r = max(2, int(w * 0.04))
-            max_dots = min(self._all_day_count, 4)
+            max_dots = min(len(self._dot_colors), 4)
             total_dot_w = max_dots * (dot_r * 2.5)
             start_x = (w - total_dot_w) / 2
             for i in range(max_dots):
+                painter.setBrush(QColor(self._dot_colors[i]))
                 cx = start_x + i * (dot_r * 2.5) + dot_r
                 painter.drawEllipse(QRectF(cx - dot_r, indicator_y + 2, dot_r * 2, dot_r * 2))
             indicator_y += dot_r * 2 + 4
-
-        if self._timed_count > 0:
-            f = painter.font()
-            f.setPixelSize(9)
-            painter.setFont(f)
-            painter.setPen(self.COL_TIMED_DOT)
-            painter.drawText(
-                QRectF(0, indicator_y, w, indicator_area_h * 0.45),
-                Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter,
-                f"\u23F0 {self._timed_count}",
-            )
 
         painter.restore()
         painter.end()
@@ -271,19 +255,22 @@ class CalendarGrid(QWidget):
             cell = self._cells[i]
             if day is not None:
                 events = self._model.get_events_for_date(day)
-                all_day_count = sum(1 for e in events if e.is_all_day)
-                timed_count = sum(1 for e in events if not e.is_all_day)
+                dot_colors = [e.color for e in events]
                 full_moon = self._model.is_full_moon_day(day)
-                cell.set_data(day, today, selected, all_day_count, timed_count, full_moon)
+                cell.set_data(day, today, selected, dot_colors, full_moon)
             else:
                 cell.set_data(None, today, selected)
 
 
 class DailyEventList(QWidget):
     add_event = Signal(date)
+    edit_event = Signal(object)
+    delete_event = Signal(int)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
+        self._current_date: Optional[date] = None
+        self._selected_event = None
         self._setup_ui()
 
     def _setup_ui(self) -> None:
@@ -296,17 +283,59 @@ class DailyEventList(QWidget):
         header_layout.addWidget(self._date_label)
         header_layout.addStretch()
 
+        self._edit_btn = QPushButton("Edytuj")
+        self._edit_btn.setObjectName("editEventBtn")
+        self._edit_btn.setEnabled(False)
+        self._edit_btn.clicked.connect(self._on_edit_clicked)
+        header_layout.addWidget(self._edit_btn)
+
+        self._delete_btn = QPushButton("Usu\u0144")
+        self._delete_btn.setObjectName("deleteEventBtn")
+        self._delete_btn.setEnabled(False)
+        self._delete_btn.clicked.connect(self._on_delete_clicked)
+        header_layout.addWidget(self._delete_btn)
+
         self._add_btn = QPushButton("+ Dodaj")
         self._add_btn.setObjectName("addEventBtn")
+        self._add_btn.clicked.connect(self._on_add_clicked)
         header_layout.addWidget(self._add_btn)
         layout.addLayout(header_layout)
 
-        self._event_list = QListWidget()
-        self._event_list.setObjectName("dailyEventList")
-        self._event_list.setFrameShape(QFrame.Shape.NoFrame)
-        layout.addWidget(self._event_list)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self._scroll = scroll
+        self._timeline = TimelineWidget()
+        scroll.setWidget(self._timeline)
+        layout.addWidget(scroll, 1)
+
+        self._timeline.edit_event.connect(self.edit_event.emit)
+        self._timeline.selection_changed.connect(self._on_selection_changed)
+
+    def _on_add_clicked(self) -> None:
+        if self._current_date is not None:
+            self.add_event.emit(self._current_date)
+
+    def _on_edit_clicked(self) -> None:
+        if self._selected_event is not None:
+            self.edit_event.emit(self._selected_event)
+
+    def _on_delete_clicked(self) -> None:
+        if self._selected_event is not None and self._selected_event.id is not None:
+            self.delete_event.emit(self._selected_event.id)
+
+    def _on_selection_changed(self, event) -> None:
+        self._selected_event = event
+        has_selection = event is not None
+        self._edit_btn.setEnabled(has_selection)
+        self._delete_btn.setEnabled(has_selection)
 
     def set_date(self, dt: date, events: list) -> None:
+        date_changed = self._current_date is None or dt != self._current_date
+        self._current_date = dt
+        self._selected_event = None
+        self._edit_btn.setEnabled(False)
+        self._delete_btn.setEnabled(False)
         polish_months = [
             "stycznia", "lutego", "marca", "kwietnia", "maja", "czerwca",
             "lipca", "sierpnia", "wrze\u015bnia", "pa\u017adziernika",
@@ -319,36 +348,14 @@ class DailyEventList(QWidget):
         self._date_label.setText(
             f"{weekday_names[dt.weekday()]}, {dt.day} {polish_months[dt.month - 1]} {dt.year}"
         )
-        self._event_list.clear()
+        self._timeline.set_events(events)
+        if date_changed:
+            self._scroll_to_default()
 
-        if not events:
-            item = QListWidgetItem("Brak wydarze\u0144")
-            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
-            self._event_list.addItem(item)
-            return
+    def _scroll_to_default(self) -> None:
+        y = self._timeline.default_scroll_y()
+        QTimer.singleShot(0, lambda: self._scroll.verticalScrollBar().setValue(y))
 
-        for event in events:
-            time_str = ""
-            if event.start_time:
-                time_str = f" {event.start_time}"
-                if event.end_time:
-                    time_str += f" - {event.end_time}"
-
-            repeat_tag = ""
-            if event.recurrence_type != "none":
-                names = {"daily": "codz.", "weekly": "co tydz.", "monthly": "co mies.", "yearly": "co rok"}
-                repeat_tag = f" [{names.get(event.recurrence_type, '')} x{event.recurrence_interval}]"
-
-            type_icon = "\u25CF" if event.is_all_day else "\u23F0"
-            text = f"{type_icon}{time_str}  {event.title}{repeat_tag}"
-            item = QListWidgetItem(text)
-            item.setData(Qt.ItemDataRole.UserRole, event.id)
-            item.setForeground(QColor(event.color))
-            self._event_list.addItem(item)
-
-    def connect_add_signal(self, slot) -> None:
-        self._add_btn.clicked.connect(lambda: self.add_event.emit(date))
-        self._add_btn.clicked.connect(slot)
 
 
 class CalendarWidget(QWidget):
@@ -418,6 +425,7 @@ class CalendarWidget(QWidget):
 
     def _on_day_clicked(self, dt: date) -> None:
         self._model.selected_date = dt
+        self._grid.refresh()
         self._show_daily_events(dt)
         self.day_selected.emit(dt)
 

@@ -172,6 +172,8 @@ class CalendarModel:
 
         self._events.clear()
         for event in events:
+            if event.recurrence_type != "none":
+                continue
             self._events.setdefault(event.start_date, []).append(event)
 
         for rec_event in recurring_events:

@@ -233,6 +233,40 @@ QWidget {
     background-color: #45a049;
 }
 
+#editEventBtn, #deleteEventBtn {
+    background-color: #3a3a3a;
+    color: #dddddd;
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: bold;
+}
+
+#editEventBtn:hover, #deleteEventBtn:hover {
+    background-color: #4a4a4a;
+}
+
+#editEventBtn:disabled, #deleteEventBtn:disabled {
+    color: #666666;
+    background-color: #2c2c2c;
+    border-color: #333333;
+}
+
+#deleteEventBtn {
+    color: #ff8a80;
+}
+
+#clockBtn {
+    background-color: #3a3a3a;
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    color: #dddddd;
+}
+
+#clockBtn:hover {
+    background-color: #4a4a4a;
+}
+
 #dailyEventList {
     background-color: #252525;
     border: 1px solid #3a3a3a;
@@ -289,6 +323,11 @@ QWidget {
     border-color: #4CAF50;
 }
 
+#eventEditor QLineEdit[error="true"] {
+    border: 1px solid #ff5252;
+    background-color: #3a2020;
+}
+
 #eventEditor QComboBox {
     background-color: #2a2a2a;
     border: 1px solid #3a3a3a;
@@ -315,6 +354,63 @@ QWidget {
     border-radius: 6px;
     padding: 6px 10px;
     color: #e0e0e0;
+}
+
+/* Date Picker */
+#eventEditor QDateEdit:focus {
+    border-color: #4CAF50;
+}
+
+#eventEditor QDateEdit::drop-down {
+    border: none;
+    border-left: 1px solid #3a3a3a;
+    background-color: #3a3a3a;
+    width: 22px;
+}
+
+#eventEditor QDateEdit::drop-down:hover {
+    background-color: #4CAF50;
+}
+
+QCalendarWidget QWidget {
+    background-color: #252525;
+    alternate-background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+QCalendarWidget QToolButton {
+    color: #e0e0e0;
+    background-color: #3a3a3a;
+    border: 1px solid #4a4a4a;
+    border-radius: 4px;
+    padding: 4px 10px;
+}
+
+QCalendarWidget QToolButton:hover {
+    background-color: #4CAF50;
+    color: #ffffff;
+    border-color: #4CAF50;
+}
+
+QCalendarWidget QAbstractItemView {
+    background-color: #252525;
+    color: #e0e0e0;
+    selection-background-color: #4CAF50;
+    selection-color: #ffffff;
+    outline: none;
+}
+
+QCalendarWidget QAbstractItemView:enabled {
+    color: #e0e0e0;
+}
+
+QCalendarWidget QAbstractItemView:disabled {
+    color: #555555;
 }
 
 #eventEditor QCheckBox {
