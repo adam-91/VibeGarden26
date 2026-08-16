@@ -6,8 +6,8 @@ from typing import Optional
 
 from src.config.settings import DEFAULT_LOCATION, MOON_PHASE_NAMES
 from src.database.repositories import EventRepository, LocationRepository
-from src.models import CalendarEvent, Location, MoonData, WeatherData
-from src.services import AstronomyService, GeolocationService, WeatherService
+from src.models import CalendarEvent, Location, MoonData, WeatherAlert, WeatherData
+from src.services import AstronomyService, GeolocationService, WeatherService, AlertService
 
 
 def _expand_recurring_event(event: CalendarEvent, range_start: date, range_end: date) -> list[tuple[str, CalendarEvent]]:
@@ -82,6 +82,7 @@ class CalendarModel:
         self._event_repository = EventRepository()
         self._weather: Optional[WeatherData] = None
         self._moon: Optional[MoonData] = None
+        self._alerts: list[WeatherAlert] = []
         self._moon_phase_days: dict[int, float] = {}
         self._today: date = date.today()
         self._lat: Optional[float] = None
@@ -115,6 +116,10 @@ class CalendarModel:
     @property
     def moon(self) -> Optional[MoonData]:
         return self._moon
+
+    @property
+    def alerts(self) -> list[WeatherAlert]:
+        return self._alerts
 
     def go_to_prev_month(self) -> None:
         if self._selected_date.month == 1:
@@ -228,10 +233,30 @@ class CalendarModel:
                 self._selected_date.year, self._selected_date.month,
                 timezone,
             )
+            self._alerts = await self._build_alerts(weather_svc, latitude, longitude, timezone)
         except ConnectionError:
             self._weather = None
             self._moon = None
+            self._alerts = []
             self._moon_phase_days.clear()
+
+    async def _build_alerts(
+        self, weather_svc: WeatherService,
+        latitude: float, longitude: float, timezone: str,
+    ) -> list[WeatherAlert]:
+        alert_svc = AlertService()
+        alerts = alert_svc.generate(self._weather)
+        try:
+            times, max_temps, precip_sums = await weather_svc.fetch_daily_history(
+                latitude, longitude, timezone
+            )
+            drought = alert_svc.drought_alert(times, max_temps, precip_sums)
+            if drought is not None:
+                alerts.append(drought)
+        except ConnectionError:
+            pass
+        alerts.sort(key=lambda a: a.severity, reverse=True)
+        return alerts
 
     def _refresh_moon_phases_sync(self) -> None:
         if self._lat is None or self._lon is None:

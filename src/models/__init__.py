@@ -89,3 +89,14 @@ class GeocodingResult:
     timezone: str = "UTC"
     country: str = ""
     admin1: str = ""
+
+
+@dataclass
+class WeatherAlert:
+    category: str = "yellow"
+    kind: str = ""
+    text: str = ""
+
+    @property
+    def severity(self) -> int:
+        return {"yellow": 0, "orange": 1, "red": 2}.get(self.category, 0)

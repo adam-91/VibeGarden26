@@ -18,6 +18,7 @@ from src.ui.calendar.event_editor import EventEditorDialog
 from src.ui.sidebar.location_panel import LocationPanel
 from src.ui.weather.weather_panel import WeatherPanel
 from src.ui.astronomy.moon_panel import MoonPanel
+from src.ui.alerts.alert_bar import AlertBar
 
 
 class MainWindow(QMainWindow):
@@ -45,7 +46,17 @@ class MainWindow(QMainWindow):
         splitter.addWidget(sidebar)
 
         self._calendar = CalendarWidget()
-        splitter.addWidget(self._calendar)
+        self._alert_bar = AlertBar()
+
+        from PySide6.QtWidgets import QVBoxLayout
+        right_pane = QWidget()
+        right_layout = QVBoxLayout(right_pane)
+        right_layout.setContentsMargins(0, 0, 0, 0)
+        right_layout.setSpacing(0)
+        right_layout.addWidget(self._alert_bar)
+        right_layout.addWidget(self._calendar, 1)
+
+        splitter.addWidget(right_pane)
 
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
@@ -114,11 +125,13 @@ class MainWindow(QMainWindow):
             )
             self._weather_panel.update_weather(self._calendar.model.weather)
             self._moon_panel.update_moon(self._calendar.model.moon)
+            self._alert_bar.set_alerts(self._calendar.model.alerts)
         try:
             run(refresh())
         except Exception:
             self._weather_panel.clear()
             self._moon_panel.clear()
+            self._alert_bar.set_alerts([])
 
     def _on_add_event(self, dt: date) -> None:
         dialog = EventEditorDialog(self, default_date=dt)

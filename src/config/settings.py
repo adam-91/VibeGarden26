@@ -68,3 +68,23 @@ CATEGORY_COLORS = {
     "office": "#2196F3",
     "garden": "#FF9800",
 }
+
+ALERT_COLORS = {
+    "yellow": "#FFC107",
+    "orange": "#FF9800",
+    "red": "#F44336",
+}
+
+ALERT_TEXT_COLORS = {
+    "yellow": "#1a1a1a",
+    "orange": "#ffffff",
+    "red": "#ffffff",
+}
+
+ALERT_WIND_THRESHOLDS = {"yellow": 72, "orange": 90, "red": 115}
+ALERT_FROST_THRESHOLDS = {"yellow": -15, "orange": -18, "red": -22}
+ALERT_FLOOD_THRESHOLDS = {"yellow": 30, "orange": 50, "red": 80}
+ALERT_DROUGHT_THRESHOLDS = {"yellow": 10, "orange": 18, "red": 26}
+
+DROUGHT_WINDOW_DAYS = 14
+DROUGHT_MIN_DRY_DAYS = 8

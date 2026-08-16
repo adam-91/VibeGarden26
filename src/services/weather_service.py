@@ -96,3 +96,40 @@ class WeatherService:
         )
         self._cache[cache_key] = (time.monotonic(), weather)
         return weather
+
+    async def fetch_daily_history(
+        self, latitude: float, longitude: float,
+        timezone: str = "auto", days: int = 14,
+    ) -> tuple[list[str], list[float], list[float]]:
+        import time
+        cache_key = f"hist_{latitude:.4f}_{longitude:.4f}"
+        cached = self._cache.get(cache_key)
+        if cached and time.monotonic() - cached[0] < WEATHER_CACHE_SECONDS:
+            return cached[1]
+
+        params = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "daily": "temperature_2m_max,precipitation_sum",
+            "timezone": timezone,
+            "past_days": days - 1,
+            "forecast_days": 1,
+        }
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.get(
+                    OPEN_METEO_WEATHER_URL, params=params, timeout=10.0
+                )
+                response.raise_for_status()
+                data = response.json()
+            except httpx.HTTPError as exc:
+                raise ConnectionError(f"Weather API error: {exc}") from exc
+
+        daily = data.get("daily", {})
+        result = (
+            list(daily.get("time", [])),
+            list(daily.get("temperature_2m_max", [])),
+            list(daily.get("precipitation_sum", [])),
+        )
+        self._cache[cache_key] = (time.monotonic(), result)
+        return result

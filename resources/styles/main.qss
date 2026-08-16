@@ -488,6 +488,11 @@ QStatusBar {
     color: #888;
 }
 
+/* Alert Bar */
+#alertBar {
+    border-bottom: 1px solid #3a3a3a;
+}
+
 /* Splitter */
 QSplitter::handle {
     background-color: #3a3a3a;
