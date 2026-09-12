@@ -59,11 +59,18 @@ class Application:
             self._qt_app.quit()
 
     @staticmethod
-    def _apply_stylesheet(app: QApplication) -> None:
+    def _resource_dir() -> Path:
+        import sys
         from pathlib import Path
-        qss_path = (
-            Path(__file__).parent.parent.parent / "resources" / "styles" / "main.qss"
-        )
+
+        if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+            return Path(sys._MEIPASS) / "resources"
+
+        return Path(__file__).parent.parent.parent / "resources"
+
+    @staticmethod
+    def _apply_stylesheet(app: QApplication) -> None:
+        qss_path = Application._resource_dir() / "styles" / "main.qss"
         if qss_path.exists():
             with open(qss_path, encoding="utf-8") as f:
                 app.setStyleSheet(f.read())

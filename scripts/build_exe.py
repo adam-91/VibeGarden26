@@ -1,11 +1,16 @@
+import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 
 def run_pyinstaller():
     import PyInstaller.__main__
+
+    add_data = f"resources{os.pathsep}resources"
 
     args = [
         "src/main.py",
@@ -13,7 +18,7 @@ def run_pyinstaller():
         "--onefile",
         "--windowed",
         "--clean",
-        "--add-data=resources:resources",
+        f"--add-data={add_data}",
     ]
 
     if sys.platform == "win32":
