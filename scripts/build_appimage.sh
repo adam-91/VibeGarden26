@@ -17,6 +17,8 @@ pyinstaller --onefile --windowed \
 mkdir -p "$APP_DIR/usr/bin"
 cp "dist/$APP_NAME" "$APP_DIR/usr/bin/"
 
+ln -sf "usr/bin/$APP_NAME" "$APP_DIR/AppRun"
+
 cat > "$APP_DIR/$APP_NAME.desktop" <<EOF
 [Desktop Entry]
 Name=$APP_NAME

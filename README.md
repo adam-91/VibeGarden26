@@ -1,8 +1,10 @@
 # VibeGarden26
 
-Biurowo-ogrodniczy kalendarz z pogodą i fazami księżyca — a desktop calendar for office and garden work, with live weather and moon phases.
+A desktop calendar for office and garden work, with live weather and moon phases.
 
-Built with Python and Qt (PySide6), VibeGarden26 combines a monthly calendar with weather forecasts, moon phase information, and location management in a single window. The UI is in Polish.
+Built with Python and Qt (PySide6), VibeGarden26 combines a monthly calendar with weather forecasts, moon phase information, weather alerts, and location management in a single window.
+
+> **Note:** 100% of the code was vibe-coded with the **DeepSeek V4 Pro** model using **opencode**.
 
 ## Features
 
@@ -12,6 +14,7 @@ Built with Python and Qt (PySide6), VibeGarden26 combines a monthly calendar wit
 - **Reminders** — day-before, hour-before, or custom (minutes)
 - **Categories & colors** — general, office, and garden categories with distinct colors
 - **Weather panel** — current conditions (temperature, humidity, pressure, UV index, sunrise/sunset), wind (speed, direction, gusts) with a 24h chart, and precipitation chart
+- **Weather alerts** — storms, frost, strong wind, flooding, and drought with yellow/orange/red severity levels
 - **Moon phase panel** — current phase, moonrise/moonset, and full-moon markers on the calendar
 - **Location management** — city search (geocoding), saved locations, and a timezone-aware clock
 - **Local storage** — events and locations persisted in SQLite
@@ -21,7 +24,6 @@ Built with Python and Qt (PySide6), VibeGarden26 combines a monthly calendar wit
 - **Python** ≥ 3.13
 - **PySide6** (Qt 6) — GUI
 - **httpx** — asynchronous HTTP client
-- **pytz** — timezone handling
 - **SQLite** — local database
 - **Open-Meteo API** — weather, astronomy, and geocoding data
 
@@ -116,6 +118,43 @@ Build an AppImage (Linux):
 ```bash
 ./scripts/build_appimage.sh
 ```
+
+> The build scripts use `resources/icons/app.png` (Linux) and
+> `resources/icons/app.ico` (Windows) as the app icon.
+
+## Prebuilt releases
+
+Release binaries are produced by the GitHub Actions workflow
+(`.github/workflows/release.yml`), which runs on tag pushes (e.g. `v0.1.0`)
+or manually via the *Actions* tab → *Build release* → *Run workflow*.
+Artifacts include:
+
+- `VibeGarden26.exe` — Windows executable (double-click to run)
+- `VibeGarden26` — standalone Linux binary
+- `VibeGarden26-0.1.0.AppImage` — Linux AppImage
+
+### Running on Windows
+
+Download `VibeGarden26.exe` and double-click it. No Python installation
+is required.
+
+### Running on Linux
+
+Standalone binary:
+
+```bash
+chmod +x VibeGarden26
+./VibeGarden26
+```
+
+AppImage:
+
+```bash
+chmod +x VibeGarden26-0.1.0.AppImage
+./VibeGarden26-0.1.0.AppImage
+```
+
+On Linux the app stores its data in `~/.vibegarden26/vibegarden.db`.
 
 ## Testing
 
