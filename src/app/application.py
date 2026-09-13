@@ -7,8 +7,9 @@ from typing import Optional
 from PySide6.QtCore import QTimer, Signal, QObject
 from PySide6.QtWidgets import QApplication
 
-from src.config.settings import APP_NAME
+from src.config.settings import APP_NAME, APP_VERSION
 from src.database.connection import db
+from src.utils.icons import app_icon
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,7 @@ class Application:
             self._qt_app = QApplication(sys.argv)
             self._qt_app.setApplicationName(APP_NAME)
             self._qt_app.setOrganizationName("VibeGarden26")
+            self._qt_app.setWindowIcon(app_icon())
         return self._qt_app
 
     def run(self) -> int:
@@ -40,7 +42,7 @@ class Application:
             level=logging.INFO,
             format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         )
-        logger.info("Starting %s v0.1.0", APP_NAME)
+        logger.info("Starting %s v%s", APP_NAME, APP_VERSION)
 
         db.init_schema()
 

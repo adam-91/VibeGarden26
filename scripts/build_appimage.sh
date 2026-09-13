@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_NAME="VibeGarden26"
-VERSION="0.1.0"
+VERSION="0.1.1"
 BUILD_DIR="dist/appimage"
 APP_DIR="$BUILD_DIR/$APP_NAME.AppDir"
 

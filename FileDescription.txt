@@ -1,0 +1,57 @@
+VibeGarden26 — Project Description
+==================================
+
+Overview
+--------
+VibeGarden26 is a desktop calendar for office and garden work that brings
+your schedule, live weather, moon phases, and weather alerts together in a
+single window. Built with Python and Qt (PySide6), it combines a monthly
+calendar with current weather conditions, 24-hour wind and precipitation
+charts, moon phase information, and location management. Weather, astronomy,
+and geocoding data are fetched live from the Open-Meteo API, while events
+and locations are stored locally in a SQLite database.
+
+Highlights
+----------
+- Monthly calendar with a daily event list, all-day / timed / multi-day
+  events, and recurring events (daily, weekly, monthly, yearly) with custom
+  intervals and end dates.
+- Reminders and color-coded categories (general, office, garden).
+- Live weather panel: temperature, humidity, pressure, UV index, sunrise and
+  sunset, plus hand-drawn 24-hour charts for wind speed, wind direction,
+  and precipitation.
+- Moon phase panel with moonrise/moonset times and full-moon markers on the
+  calendar grid.
+- Intelligent weather alerts covering storms, frost, strong wind, flooding,
+  and drought, with yellow/orange/red severity levels.
+- Location management with geocoding search, saved locations, and a
+  timezone-aware clock.
+
+Challenge
+---------
+- Mixing Qt's event loop with asynchronous network calls (httpx) so the UI
+  stays responsive while waiting for live API data.
+- Drawing custom 24-hour weather charts (wind, precipitation, direction) with
+  QPainter rather than relying on external charting libraries.
+- Handling timezone awareness across weather, astronomy, and event scheduling.
+- Managing SQLite schema and migrations, plus caching weather responses to
+  avoid hammering the API.
+- Shipping cross-platform builds (PyInstaller executable and Linux AppImage).
+
+Outcome
+-------
+A working, tested desktop application that combines productivity (calendar)
+with outdoor-planning intelligence (weather, moon, and alerts) in one
+polished, native Qt interface.
+
+Technologies used
+-----------------
+- Python 3.13+
+- PySide6 (Qt 6)
+- httpx
+- SQLite
+- Open-Meteo API (weather, astronomy, geocoding)
+- pytest
+
+Note: 100% of the code was vibe-coded with the DeepSeek V4 Pro model using
+opencode.

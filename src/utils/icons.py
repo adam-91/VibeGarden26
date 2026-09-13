@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QIcon, QPixmap
 
 MOON_PHASE_ICONS: dict[int, str] = {
     0: "none_moon.png",
@@ -29,6 +29,10 @@ ICONS_DIR = _resources_dir() / "icons"
 
 def icon_path(name: str) -> str:
     return str(ICONS_DIR / name)
+
+
+def app_icon() -> QIcon:
+    return QIcon(icon_path("app.png"))
 
 
 def weather_icon(code: int) -> str:

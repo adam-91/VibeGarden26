@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 APP_NAME = "VibeGarden26"
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.1.1"
 
 DATA_DIR = Path.home() / f".{APP_NAME.lower()}"
 DATA_DIR.mkdir(parents=True, exist_ok=True)

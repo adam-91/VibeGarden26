@@ -541,3 +541,83 @@ QScrollBar::add-line:horizontal,
 QScrollBar::sub-line:horizontal {
     width: 0;
 }
+
+/* Color Picker Dialog */
+QColorDialog {
+    background-color: #252525;
+}
+
+QColorDialog QLabel {
+    color: #cccccc;
+}
+
+QColorDialog QPushButton {
+    background-color: #3a3a3a;
+    color: #dddddd;
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    padding: 6px 14px;
+}
+
+QColorDialog QPushButton:hover {
+    background-color: #4a4a4a;
+}
+
+QColorDialog QPushButton:default {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+QColorDialog QLineEdit,
+QColorDialog QSpinBox {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #e0e0e0;
+}
+
+QColorDialog QSpinBox::up-button,
+QColorDialog QSpinBox::down-button {
+    background-color: #3a3a3a;
+    border: none;
+    width: 16px;
+}
+
+QColorDialog QComboBox {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #e0e0e0;
+}
+
+QColorDialog QComboBox QAbstractItemView {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    selection-background-color: #4CAF50;
+    color: #e0e0e0;
+}
+
+QColorDialog QTabWidget::pane {
+    border: 1px solid #3a3a3a;
+}
+
+QColorDialog QTabBar::tab {
+    background-color: #2a2a2a;
+    color: #cccccc;
+    padding: 6px 12px;
+    border: 1px solid #3a3a3a;
+}
+
+QColorDialog QTabBar::tab:selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+QColorDialog QColorPicker,
+QColorDialog QColorLuminancePicker {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+}

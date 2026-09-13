@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import random
 from datetime import date
 from typing import Optional
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QCheckBox,
     QColorDialog,
@@ -25,6 +27,25 @@ from PySide6.QtWidgets import (
 from src.config.settings import CATEGORY_COLORS
 from src.models import CalendarEvent
 from src.ui.calendar.clock_picker import ClockTimeField
+
+COLOR_PALETTE = [
+    "#4CAF50",  # zielony
+    "#F44336",  # czerwony
+    "#2196F3",  # niebieski
+    "#FFEB3B",  # żółty
+    "#1565C0",  # ciemno-niebieski
+    "#E91E63",  # magenta
+    "#2E7D32",  # ciemno-zielony
+    "#FFFFFF",  # biały
+    "#9C27B0",  # fioletowy
+    "#FF9800",  # pomarańczowy
+    "#81C784",  # seledynowy
+    "#26C6DA",  # turkusowy
+]
+
+
+def _random_color() -> str:
+    return random.choice(COLOR_PALETTE)
 
 
 class EventEditorDialog(QDialog):
@@ -79,7 +100,7 @@ class EventEditorDialog(QDialog):
         form.addRow("Data końca:", self._end_date)
 
         self._all_day_check = QCheckBox("Całodniowe")
-        self._all_day_check.setChecked(True)
+        self._all_day_check.setChecked(False)
         form.addRow("", self._all_day_check)
 
         self._start_time = ClockTimeField()
@@ -174,8 +195,8 @@ class EventEditorDialog(QDialog):
         widget.update()
 
     def _on_all_day_toggled(self, checked: bool) -> None:
-        self._start_time.setEnabled(True)
-        self._end_time.setEnabled(True)
+        self._start_time.setEnabled(not checked)
+        self._end_time.setEnabled(not checked)
 
     def _on_category_changed(self, idx: int) -> None:
         category = self._category_combo.itemData(idx)
@@ -192,15 +213,18 @@ class EventEditorDialog(QDialog):
         )
 
     def _on_color_pick(self) -> None:
-        color = QColorDialog.getColor()
-        if color.isValid():
+        dialog = QColorDialog(self)
+        dialog.setOption(QColorDialog.ColorDialogOption.DontUseNativeDialog, True)
+        dialog.setCurrentColor(QColor(self._current_color))
+        if dialog.exec() == QColorDialog.DialogCode.Accepted:
+            color = dialog.selectedColor()
             self._current_color = color.name()
             self._color_btn.setStyleSheet(
                 f"background-color: {color.name()}; border: 2px solid #555; border-radius: 16px;"
             )
 
     def _populate(self) -> None:
-        self._current_color = "#4CAF50"
+        self._current_color = _random_color()
         if self._event:
             self._title_edit.setText(self._event.title)
             self._desc_edit.setPlainText(self._event.description)

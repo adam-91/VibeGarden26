@@ -19,6 +19,11 @@ Built with Python and Qt (PySide6), VibeGarden26 combines a monthly calendar wit
 - **Location management** — city search (geocoding), saved locations, and a timezone-aware clock
 - **Local storage** — events and locations persisted in SQLite
 
+## Changelog
+
+- **0.1.1** — added weather and moon icons, plus minor calendar improvements (event color palette, all-day toggle fix, native color picker).
+- **0.1.0** — initial release.
+
 ## Tech stack
 
 - **Python** ≥ 3.13
@@ -125,13 +130,13 @@ Build an AppImage (Linux):
 ## Prebuilt releases
 
 Release binaries are produced by the GitHub Actions workflow
-(`.github/workflows/release.yml`), which runs on tag pushes (e.g. `v0.1.0`)
+(`.github/workflows/release.yml`), which runs on tag pushes (e.g. `v0.1.1`)
 or manually via the *Actions* tab → *Build release* → *Run workflow*.
 Artifacts include:
 
 - `VibeGarden26.exe` — Windows executable (double-click to run)
 - `VibeGarden26` — standalone Linux binary
-- `VibeGarden26-0.1.0.AppImage` — Linux AppImage
+- `VibeGarden26-0.1.1.AppImage` — Linux AppImage
 
 ### Running on Windows
 
@@ -150,8 +155,8 @@ chmod +x VibeGarden26
 AppImage:
 
 ```bash
-chmod +x VibeGarden26-0.1.0.AppImage
-./VibeGarden26-0.1.0.AppImage
+chmod +x VibeGarden26-0.1.1.AppImage
+./VibeGarden26-0.1.1.AppImage
 ```
 
 On Linux the app stores its data in `~/.vibegarden26/vibegarden.db`.

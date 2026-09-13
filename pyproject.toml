@@ -1,6 +1,6 @@
 [project]
 name = "VibeGarden26"
-version = "0.1.0"
+version = "0.1.1"
 description = "Biurowo-ogrodniczy kalendarz z pogodą i fazami księżyca"
 readme = "README.md"
 requires-python = ">=3.13"
