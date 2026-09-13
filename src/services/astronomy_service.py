@@ -6,13 +6,10 @@ import httpx
 
 from src.config.settings import MOON_PHASE_NAMES, OPEN_METEO_WEATHER_URL
 from src.models import MoonData
+from src.utils.icons import MOON_PHASE_ICONS
 
 
 class AstronomyService:
-    MOON_PHASE_ICONS = {
-        0: "🌑", 1: "🌒", 2: "🌓", 3: "🌔",
-        4: "🌕", 5: "🌖", 6: "🌗", 7: "🌘",
-    }
 
     async def fetch_moon_data(
         self, latitude: float, longitude: float,
@@ -48,7 +45,7 @@ class AstronomyService:
         return MoonData(
             moon_phase=moon_phase_raw,
             moon_phase_name=MOON_PHASE_NAMES[phase_index],
-            moon_phase_icon=self.MOON_PHASE_ICONS[phase_index],
+            moon_phase_icon=MOON_PHASE_ICONS[phase_index],
             moonrise=moonrise,
             moonset=moonset,
             date=date_val,

@@ -95,7 +95,7 @@ async def test_astronomy_service(httpx_mock: HTTPXMock):
     assert result is not None
     assert result.moonrise == "2026-08-03T18:30"
     assert result.moonset == "2026-08-03T04:15"
-    assert result.moon_phase_icon == "🌗"
+    assert result.moon_phase_icon == "moon_croissant.png"
 
 
 @pytest.mark.asyncio

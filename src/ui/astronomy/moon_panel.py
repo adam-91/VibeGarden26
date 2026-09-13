@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from src.models import MoonData
+from src.utils.icons import load_icon_pixmap
 
 
 class MoonPanel(QWidget):
@@ -23,10 +24,12 @@ class MoonPanel(QWidget):
         title.setObjectName("panelTitle")
         layout.addWidget(title)
 
-        self._moon_icon = QLabel("🌕")
+        self._moon_icon = QLabel()
         self._moon_icon.setObjectName("moonIcon")
         self._moon_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self._moon_icon)
+        self._moon_icon.setFixedSize(56, 56)
+        self._moon_icon.setScaledContents(True)
+        layout.addWidget(self._moon_icon, 0, Qt.AlignmentFlag.AlignHCenter)
 
         self._phase_name = QLabel("--")
         self._phase_name.setObjectName("moonPhaseName")
@@ -46,10 +49,10 @@ class MoonPanel(QWidget):
 
     def update_moon(self, moon: Optional[MoonData]) -> None:
         if moon is None:
-            self._moon_icon.setText("🌕")
+            self._moon_icon.setPixmap(load_icon_pixmap("full_moon.png", 56))
             self._phase_name.setText("Brak danych")
             return
-        self._moon_icon.setText(moon.moon_phase_icon)
+        self._moon_icon.setPixmap(load_icon_pixmap(moon.moon_phase_icon, 56))
         self._phase_name.setText(moon.moon_phase_name)
         if moon.moonrise:
             moonrise_time = moon.moonrise.split("T")[-1] if "T" in moon.moonrise else moon.moonrise
@@ -59,7 +62,7 @@ class MoonPanel(QWidget):
             self._moonset_label.setText(f"Zachód K.: {moonset_time}")
 
     def clear(self) -> None:
-        self._moon_icon.setText("🌕")
+        self._moon_icon.setPixmap(load_icon_pixmap("full_moon.png", 56))
         self._phase_name.setText("--")
         self._moonrise_label.setText("Wschód K.: --")
         self._moonset_label.setText("Zachód K.: --")

@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from src.models import WeatherData
+from src.utils.icons import load_icon_pixmap, weather_icon
 
 WIND_DIRECTIONS = [
     "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
@@ -73,47 +74,6 @@ def _temp_color(temp: float) -> QColor:
     if temp >= -20:
         return QColor("#1A237E")
     return QColor("#6A1B9A")
-
-
-def _weather_emoji(code: int) -> str:
-    if code in (0, 1):
-        return "\u2600"
-    if code == 2:
-        return "\u26C5"
-    if code == 3:
-        return "\u2601"
-    if code in (45, 48):
-        return "\u2601"
-    if 51 <= code <= 57:
-        return "\u2614"
-    if 61 <= code <= 67:
-        return "\u2614"
-    if 71 <= code <= 77:
-        return "\u2744"
-    if 80 <= code <= 82:
-        return "\u2614"
-    if 85 <= code <= 86:
-        return "\u2744"
-    if code >= 95:
-        return "\u2614"
-    return "\u2600"
-
-
-def _is_fog(code: int) -> bool:
-    return code in (45, 48)
-
-
-def _is_storm(code: int) -> bool:
-    return code in (95, 96, 99)
-
-
-def _hourly_icon(code: int, is_night: bool) -> str:
-    if is_night:
-        if code in (0, 1):
-            return "\u263E"
-        if code == 2:
-            return "\u2601"
-    return _weather_emoji(code)
 
 
 def _parse_hhmm(s: str) -> Optional[int]:
@@ -305,15 +265,6 @@ class _HourlyWeatherView(QWidget):
         self.setMinimumWidth(self.COL_W)
         self.update()
 
-    def _is_night(self, minutes: Optional[int]) -> bool:
-        if minutes is None:
-            return False
-        sr = _parse_hhmm(self._sunrise)
-        ss = _parse_hhmm(self._sunset)
-        if sr is None or ss is None or ss <= sr:
-            return False
-        return minutes < sr or minutes > ss
-
     def paintEvent(self, event) -> None:
         if not self._times:
             return
@@ -350,8 +301,6 @@ class _HourlyWeatherView(QWidget):
         def bar_h(v: float) -> float:
             return (v / pmax) * (precip_bottom - precip_top)
 
-        icon_font = painter.font()
-        icon_font.setPixelSize(13)
         temp_font = painter.font()
         temp_font.setPixelSize(9)
         temp_font.setBold(True)
@@ -370,17 +319,8 @@ class _HourlyWeatherView(QWidget):
             yy = y_temp(v)
 
             code = self._codes[i] if i < len(self._codes) else 0
-            minutes = _parse_hhmm(self._times[i])
-            is_night = self._is_night(minutes)
-            icon = _hourly_icon(code, is_night)
-
-            painter.setFont(icon_font)
-            painter.setPen(QColor("#ffffff"))
-            painter.drawText(
-                QRectF(cx - self.COL_W / 2, 0, self.COL_W, 14),
-                Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter,
-                icon,
-            )
+            icon = load_icon_pixmap(weather_icon(code), 13)
+            painter.drawPixmap(int(cx - 6.5), 0, icon)
 
             painter.setFont(temp_font)
             painter.setPen(_temp_color(v))
@@ -511,12 +451,8 @@ class _PrecipHourlyView(QWidget):
 
             code = self._codes[i] if i < len(self._codes) else 0
             if code in (95, 96, 99):
-                painter.setPen(QColor("#FFD54F"))
-                painter.drawText(
-                    QRectF(cx - bar_w / 2, 0, bar_w, 14),
-                    Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop,
-                    "\u26A1",
-                )
+                thunder = load_icon_pixmap("thunder_storm.png", 12)
+                painter.drawPixmap(int(cx - 6), 0, thunder)
 
             if i % 3 == 0:
                 painter.setPen(QColor("#888888"))
@@ -660,19 +596,15 @@ class WeatherPanel(QWidget):
     def _build_icon_row(self):
         row = QHBoxLayout()
         row.setSpacing(6)
-        icon = QLabel("")
+        icon = QLabel()
         icon.setObjectName("weatherIconBig")
         icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        fog = QLabel("")
-        fog.setObjectName("weatherBadge")
-        storm = QLabel("")
-        storm.setObjectName("weatherBadge")
+        icon.setFixedSize(48, 48)
+        icon.setScaledContents(True)
         row.addStretch()
         row.addWidget(icon)
-        row.addWidget(fog)
-        row.addWidget(storm)
         row.addStretch()
-        return row, icon, fog, storm
+        return row, icon
 
     def _build_page1(self) -> QWidget:
         page = QWidget()
@@ -685,7 +617,7 @@ class WeatherPanel(QWidget):
         self._location_label.setWordWrap(True)
         layout.addWidget(self._location_label)
 
-        icon_row, self._p1_icon, self._p1_fog, self._p1_storm = self._build_icon_row()
+        icon_row, self._p1_icon = self._build_icon_row()
         layout.addLayout(icon_row)
 
         self._temp_label = QLabel("--\u00B0C")
@@ -741,7 +673,7 @@ class WeatherPanel(QWidget):
         self._p3_location_label.setWordWrap(True)
         layout.addWidget(self._p3_location_label)
 
-        icon_row, self._p3_icon, self._p3_fog, self._p3_storm = self._build_icon_row()
+        icon_row, self._p3_icon = self._build_icon_row()
         layout.addLayout(icon_row)
 
         self._no_precip_label = QLabel("Brak opad\u00F3w przez najbli\u017Csze 24h")
@@ -834,19 +766,9 @@ class WeatherPanel(QWidget):
         self._page_indicator.setText(f"{self._page_index + 1}/4")
 
     def _update_icons(self, code: int) -> None:
-        main = _weather_emoji(code)
-        fog = _is_fog(code)
-        storm = _is_storm(code)
-        pairs = [
-            (self._p1_icon, self._p1_fog, self._p1_storm),
-            (self._p3_icon, self._p3_fog, self._p3_storm),
-        ]
-        for icon, fog_lbl, storm_lbl in pairs:
-            icon.setText(main)
-            fog_lbl.setText("\u2261" if fog else "")
-            fog_lbl.setVisible(fog)
-            storm_lbl.setText("\u26A1" if storm else "")
-            storm_lbl.setVisible(storm)
+        pixmap = load_icon_pixmap(weather_icon(code), 48)
+        for icon in (self._p1_icon, self._p3_icon):
+            icon.setPixmap(pixmap)
 
     def update_weather(self, weather: Optional[WeatherData]) -> None:
         if weather is None:

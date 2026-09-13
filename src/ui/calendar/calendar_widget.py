@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
 from src.config.settings import CATEGORY_COLORS
 from src.ui.calendar.calendar_model import CalendarModel
 from src.ui.calendar.timeline import TimelineWidget
+from src.utils.icons import load_icon_pixmap
 
 
 class CalendarDayCell(QWidget):
@@ -138,13 +139,10 @@ class CalendarDayCell(QWidget):
         painter.save()
 
         if self._is_full_moon:
-            f = painter.font()
-            f.setPixelSize(max(10, int(h * 0.22)))
-            painter.setFont(f)
-            painter.drawText(
-                QRectF(0, indicator_y, w, indicator_area_h * 0.55),
-                Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter,
-                "\U0001F315",
+            icon_size = max(10, int(h * 0.22))
+            pixmap = load_icon_pixmap("full_moon.png", icon_size)
+            painter.drawPixmap(
+                int((w - icon_size) / 2), int(indicator_y), pixmap
             )
             indicator_y += indicator_area_h * 0.50
 
